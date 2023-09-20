@@ -2,7 +2,7 @@ CC = g++
 CFLAGS = -Wall
 
 SRC = server.cpp
-OUT = server
+OUT = bin/server
 
 all: $(OUT)
 
