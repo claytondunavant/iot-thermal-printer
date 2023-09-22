@@ -1,19 +1,24 @@
 CC = g++
 CFLAGS = -Wall
 
-SRC_FILES = server.cpp
-BIN_FILES = server
-SRC_DIR=src/
+CLIENT_SRC_FILES = client.cpp
+SERVER_SRC_FILES = server.cpp
+CLIENT_SRC_DIR=src/client/
+SERVER_SRC_DIR=src/server/
 BIN_DIR=bin/
 
-SRC=$(addprefix $(SRC_DIR), $(SRC_FILES))
-BIN=$(addprefix $(BIN_DIR), $(BIN_FILES))
+CLIENT_SRC=$(addprefix $(CLIENT_SRC_DIR), $(CLIENT_SRC_FILES))
+SERVER_SRC=$(addprefix $(SERVER_SRC_DIR), $(SERVER_SRC_FILES))
 
-all: $(BIN)
+all: server client
 
-$(BIN): $(SRC)
+server: $(SERVER_SRC)
 	mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $(BIN) $(SRC)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)$@ $(SERVER_SRC)
+
+client: $(CLIENT_SRC)
+	mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)$@ $(CLIENT_SRC)
 	
 clean:
 	rm -rf $(BIN_DIR)

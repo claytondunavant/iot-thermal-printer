@@ -16,6 +16,7 @@ Main Source: https://beej.us/guide/bgnet/html/
 #define DOMAIN "localhost"
 #define PORT 1985
 #define BACKLOG 5
+#define BUFFERSIZE 1024
 
 /*
 getaddrinfo()
@@ -88,6 +89,21 @@ int main () {
     
     addr_size = sizeof(client_addr);
     clientfd = accept(sockfd, (struct sockaddr *)&client_addr,  &addr_size);
+
+    close(sockfd);
+    
+    char buf[BUFFERSIZE];
+    int charsRead;
+    while ( (charsRead = recv(clientfd, &buf, BUFFERSIZE, 0)) > 0 ) {
+        printf("%s\n", buf);
+        
+        // clean the buffer
+        memset(&buf, 0, BUFFERSIZE);
+    }
+    
+    //TODO if charsRead is -1 then there was an error 
+    
+    close(clientfd);
     
     return 0;   
 }
