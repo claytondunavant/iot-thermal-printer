@@ -89,6 +89,5 @@ int main () {
     addr_size = sizeof(client_addr);
     clientfd = accept(sockfd, (struct sockaddr *)&client_addr,  &addr_size);
     
-
     return 0;   
 }
