@@ -11,10 +11,12 @@ Main Source: https://beej.us/guide/bgnet/html/
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <stdio.h>
 
 // TODO: make port str constant
 #define DOMAIN "localhost"
-#define PORT 1985
+#define PORT 16662
+#define PORT_STR "16662"
 #define BACKLOG 5
 #define BUFFERSIZE 1024
 
@@ -44,7 +46,7 @@ int main () {
     
 
     // save an array of addrinfo to server_info given my hints
-    status = getaddrinfo(DOMAIN, "1985", &hints, &server_info);
+    status = getaddrinfo(DOMAIN, PORT_STR, &hints, &server_info);
     if ( status != 0 ) {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
     }
@@ -92,6 +94,7 @@ int main () {
 
     close(sockfd);
     
+    /*
     char buf[BUFFERSIZE];
     int charsRead;
     while ( (charsRead = recv(clientfd, &buf, BUFFERSIZE, 0)) > 0 ) {
@@ -99,9 +102,14 @@ int main () {
         
         // clean the buffer
         memset(&buf, 0, BUFFERSIZE);
-    }
+    }*/
     
-    //TODO if charsRead is -1 then there was an error 
+    //TODO if charsRetad is -1 then there was an error 
+    FILE * fssock = fdopen(clientfd, "r+");
+    fprintf(fssock, "Content-type: text/html%c%c", 10, 10);
+    fprintf(fssock, "<h1>Hello World</h1>\n");
+    send(clientfd, "Hey\n", 4, 0 );
+    fclose(fssock);
     
     close(clientfd);
     
