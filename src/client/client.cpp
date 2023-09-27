@@ -1,14 +1,8 @@
-#include <cstdio>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <cstring>
-#include <unistd.h>
-#include <stdlib.h>
+#include "../sockethelper/sockethelper.h"
+#include <iostream>
 
-#define SERVER "localhost"
-#define PORT 16662
-#define PORT_STR "16662"
-#define BUFFERSIZE 1024
+#define SERIAL "/dev/ttyS0"
+
 
 int main () {
     
@@ -55,14 +49,8 @@ int main () {
         exit(1);
     }
     
-    char buf[BUFFERSIZE];
-    int charsRead;
-    while ( (charsRead = recv(sockfd, &buf, BUFFERSIZE, 0)) > 0 ) {
-        printf("%s\n", buf);
-        
-        // clean the buffer
-        memset(&buf, 0, BUFFERSIZE);
-    }
-
+    skt_write(sockfd, "\r\n\r\n");
+    std::string msg = skt_read_http_msg_header(sockfd);
+    
     close(sockfd);
 }

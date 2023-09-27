@@ -1,6 +1,8 @@
 CC = g++
 CFLAGS = -Wall
 
+SOCKET_HELPER=src/sockethelper/sockethelper.cpp
+
 CLIENT_SRC_FILES = client.cpp
 SERVER_SRC_FILES = server.cpp
 CLIENT_SRC_DIR=src/client/
@@ -14,11 +16,11 @@ all: server client
 
 server: $(SERVER_SRC)
 	mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $(BIN_DIR)$@ $(SERVER_SRC)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)$@ $(SERVER_SRC) $(SOCKET_HELPER)
 
 client: $(CLIENT_SRC)
 	mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $(BIN_DIR)$@ $(CLIENT_SRC)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)$@ $(CLIENT_SRC) $(SOCKET_HELPER)
 	
 clean:
 	rm -rf $(BIN_DIR)

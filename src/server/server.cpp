@@ -2,23 +2,10 @@
 Main Source: https://beej.us/guide/bgnet/html/
 */
 
-#include <arpa/inet.h>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <netdb.h>
-#include <netinet/in.h>
+#include "../sockethelper/sockethelper.h"
+#include <asm-generic/socket.h>
+#include <string>
 #include <sys/socket.h>
-#include <unistd.h>
-#include <stdio.h>
-
-// TODO: make port str constant
-#define DOMAIN "localhost"
-#define PORT 16662
-#define PORT_STR "16662"
-#define BACKLOG 5
-#define BUFFERSIZE 1024
 
 /*
 getaddrinfo()
@@ -37,6 +24,7 @@ int main () {
     socklen_t addr_size; 
     int sockfd; // socket file desciptor
     int clientfd; // client file descriptor
+    int yes = 1;
     
     // Set up hints to provide to getaddrinfo
     memset(&hints, 0, sizeof(hints));
@@ -46,7 +34,7 @@ int main () {
     
 
     // save an array of addrinfo to server_info given my hints
-    status = getaddrinfo(DOMAIN, PORT_STR, &hints, &server_info);
+    status = getaddrinfo(SERVER, PORT_STR, &hints, &server_info);
     if ( status != 0 ) {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
     }
@@ -58,6 +46,12 @@ int main () {
         sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
         if ( sockfd == -1 ) {
             perror("server: socket");
+        }
+        
+        status = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+        if ( status == -1 ) {
+            close(sockfd);
+            exit(1);
         }
         
         // bind socket file descriptor to a port
@@ -89,29 +83,32 @@ int main () {
 
     printf("Waiting for connections...\n");
     
-    addr_size = sizeof(client_addr);
-    clientfd = accept(sockfd, (struct sockaddr *)&client_addr,  &addr_size);
+    // accept loop
+    while (1) {
 
-    close(sockfd);
-    
-    /*
-    char buf[BUFFERSIZE];
-    int charsRead;
-    while ( (charsRead = recv(clientfd, &buf, BUFFERSIZE, 0)) > 0 ) {
-        printf("%s\n", buf);
+        addr_size = sizeof(client_addr);
+        clientfd = accept(sockfd, (struct sockaddr *)&client_addr,  &addr_size);
         
-        // clean the buffer
-        memset(&buf, 0, BUFFERSIZE);
-    }*/
+        if (!fork()) { //child
+            close(sockfd);
+            
+            std::string str = std::string();
+            str.append("HTTP/1.1 200 Document follows\r\n");
+            str.append("Server: IoT Thermal Printer\r\n");
+            str.append("Content-type: text/html\r\n");
+            str.append("\r\n");
+            str.append("<h1>Hello World</h1>\r\n");
+
+            skt_read_http_msg_header(clientfd);
+            skt_write(clientfd, str);
+
+            close(clientfd);
+            exit(0);
+        }
+        
+        close(clientfd);
     
-    //TODO if charsRetad is -1 then there was an error 
-    FILE * fssock = fdopen(clientfd, "r+");
-    fprintf(fssock, "Content-type: text/html%c%c", 10, 10);
-    fprintf(fssock, "<h1>Hello World</h1>\n");
-    send(clientfd, "Hey\n", 4, 0 );
-    fclose(fssock);
-    
-    close(clientfd);
+    }
     
     return 0;   
 }
