@@ -53,7 +53,9 @@ int main () {
     
     Message msg = skt_read_msg(sockfd);
     
-    tp.print(msg.body);
+    std::string to_print = html_to_thermal_printer(msg.body);
+    
+    tp.print(to_print);
     
     close(sockfd);
 }
