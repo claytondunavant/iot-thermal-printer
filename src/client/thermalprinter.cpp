@@ -8,7 +8,7 @@ Thermal_Printer::Thermal_Printer(std::string path) {
 
 void Thermal_Printer::print(std::string str) {
 
-    FILE * file = fopen(mpath.c_str(), "w");
+    FILE * file = fopen(mpath.c_str(), "a");
     if ( file == NULL ) {
         perror("Failed to open serial file");
         return;
