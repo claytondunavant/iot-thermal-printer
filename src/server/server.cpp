@@ -93,13 +93,12 @@ int main () {
             close(sockfd);
             
             std::string str = std::string();
-            str.append("HTTP/1.1 200 Document follows\r\n");
-            str.append("Server: IoT Thermal Printer\r\n");
-            str.append("Content-type: text/html\r\n");
+            str.append("PRINT\r\n");
             str.append("\r\n");
             str.append("<h1>Hello World</h1>\r\n");
+            str.append("<p>Hey there cool kid, is this you?</p>\r\n");
+            str.append("\r\n");
 
-            skt_read_http_msg_header(clientfd);
             skt_write(clientfd, str);
 
             close(clientfd);

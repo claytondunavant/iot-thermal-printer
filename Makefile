@@ -3,7 +3,7 @@ CFLAGS = -Wall
 
 SOCKET_HELPER=src/sockethelper/sockethelper.cpp
 
-CLIENT_SRC_FILES = client.cpp
+CLIENT_SRC_FILES = client.cpp thermalprinter.cpp
 SERVER_SRC_FILES = server.cpp
 CLIENT_SRC_DIR=src/client/
 SERVER_SRC_DIR=src/server/

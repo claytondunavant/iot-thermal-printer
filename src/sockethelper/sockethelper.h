@@ -12,6 +12,11 @@
 #define BACKLOG 5
 #define BUFFERSIZE 1024
 
-std::string skt_read_http_msg_header(int fd);
+struct Message {
+    std::string header;
+    std::string body;
+};
+
+Message skt_read_msg(int fd);
 
 void skt_write(int fd, std::string str);

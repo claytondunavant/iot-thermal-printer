@@ -1,8 +1,7 @@
 #include "../sockethelper/sockethelper.h"
-#include <iostream>
+#include "thermalprinter.h"
 
-#define SERIAL "/dev/ttyS0"
-
+#define SERIAL "testSerial"
 
 int main () {
     
@@ -49,8 +48,12 @@ int main () {
         exit(1);
     }
     
-    skt_write(sockfd, "\r\n\r\n");
-    std::string msg = skt_read_http_msg_header(sockfd);
+    // create Thermal Printer object
+    Thermal_Printer tp = Thermal_Printer(SERIAL);
+    
+    Message msg = skt_read_msg(sockfd);
+    
+    tp.print(msg.body);
     
     close(sockfd);
 }
