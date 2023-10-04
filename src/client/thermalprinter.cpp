@@ -74,9 +74,6 @@ std::string html_to_thermal_printer(std::string html) {
                 // get the substring, its the tag name
                 buf = html.substr(i+2, i_next_close_carrot - (i+2));
                 
-                std::cout << "Close Tag BUF:" << std::endl;
-                std::cout << buf << std::endl;
-                
                 // jump to after tag
                 i = i_next_close_carrot;
                 continue;
@@ -86,8 +83,6 @@ std::string html_to_thermal_printer(std::string html) {
                 
                 // get the substring, its the tag name
                 buf = html.substr(i+1, i_next_close_carrot - (i+1));
-                std::cout << "Open Tag BUF:" << std::endl;
-                std::cout << buf << std::endl;
                 
                 // TODO handle unrecongized nested cases
                 if ( is_recognized_tag(buf) ) {
@@ -102,8 +97,7 @@ std::string html_to_thermal_printer(std::string html) {
                 }
                 
                 // jump to after tag
-                // TODO: why is this -1 
-                i = i_next_close_carrot - 1;
+                i = i_next_close_carrot;
                 continue;
             }
         }

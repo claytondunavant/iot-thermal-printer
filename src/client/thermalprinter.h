@@ -6,8 +6,9 @@
 
 #define LEGAL_TAGS {"h1", "p"}
 
+#define ALIGN_LEFT "\x1B\x61\x00"
 #define ALIGN_CENTER "\x1B\x61\x01"
-#define ALIGN_LEFT "\x1B\x61\x01"
+#define ALIGN_RIGHT "\x1B\x61\x02"
 #define BOLD "\x1B\x20\x01"
 #define UNBOLD "\x1B\x20\x00"
 
