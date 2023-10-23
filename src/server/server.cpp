@@ -3,9 +3,8 @@ Main Source: https://beej.us/guide/bgnet/html/
 */
 
 #include "../sockethelper/sockethelper.h"
-#include <asm-generic/socket.h>
-#include <string>
-#include <sys/socket.h>
+#include <cstdio>
+#include <iostream>
 
 /*
 getaddrinfo()
@@ -15,7 +14,12 @@ listen()
 accept()
 */
 
-int main () {
+/*
+Usage:
+./server localhost serverMessageFile
+*/
+
+int main (int argc, char *argv[]) {
     
     int status;
     struct addrinfo hints; // hints to give to getaddrinfo
@@ -26,6 +30,12 @@ int main () {
     int clientfd; // client file descriptor
     int yes = 1;
     
+    // handle command line arguments
+    if ( argc != 3 ) {
+        fprintf(stderr, "Usage: server hostname /path/to/message\n");
+        exit(1);
+    }
+    
     // Set up hints to provide to getaddrinfo
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET; // ipv4
@@ -34,7 +44,7 @@ int main () {
     
 
     // save an array of addrinfo to server_info given my hints
-    status = getaddrinfo(SERVER, PORT_STR, &hints, &server_info);
+    status = getaddrinfo(argv[1], PORT_STR, &hints, &server_info);
     if ( status != 0 ) {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
     }
@@ -93,12 +103,17 @@ int main () {
             close(sockfd);
             
             std::string str = std::string();
-            str.append("PRINT\r\n");
-            str.append("\r\n");
-            str.append("<h1>Hello World</h1>\r\n");
-            str.append("<p>Hey there cool kid, is this you?</p>\r\n");
-            str.append("\r\n");
 
+            std::fstream serverMessageFile(argv[2]);
+
+            if ( serverMessageFile.is_open() ) {
+                char c;
+                while ( serverMessageFile.get(c) ) {
+                    str.push_back(c);
+                }
+                serverMessageFile.close();
+            }
+            
             skt_write(clientfd, str);
 
             close(clientfd);

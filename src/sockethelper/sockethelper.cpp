@@ -1,7 +1,7 @@
 #include "sockethelper.h"
 
-bool str_end_is_double_crlf(std::string str) {
-    return str.length() >= 4 && str.substr(str.length() - 4).compare("\r\n\r\n") == 0;
+bool str_end_is_double_lf(std::string str) {
+    return str.length() >= 2 && str.substr(str.length() - 2).compare("\n\n") == 0;
 }
 
 /*
@@ -9,10 +9,10 @@ Whether http requests have a message or not requires knowledge on the content of
 I don't want to deal with that.
 So behold, my content-independent protocol for now:
 
-<header info>\r\n
-\r\n
+<header info>\n
+\n
 <body info>\r\n
-\r\n
+\n
 */
 
 Message skt_read_msg(int fd) {
@@ -29,14 +29,14 @@ Message skt_read_msg(int fd) {
 
             msg.header.push_back(c);
             
-            if (str_end_is_double_crlf(msg.header))
+            if (str_end_is_double_lf(msg.header))
                 is_header = false;
 
         } else {
 
             msg.body.push_back(c);
 
-            if (str_end_is_double_crlf(msg.body))
+            if (str_end_is_double_lf(msg.body))
                 break;
             
         }

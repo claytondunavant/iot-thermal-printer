@@ -5,8 +5,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string>
+#include <fstream>
 
-#define SERVER "localhost"
 #define PORT 16662
 #define PORT_STR "16662"
 #define BACKLOG 5

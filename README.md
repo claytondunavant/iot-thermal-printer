@@ -17,18 +17,20 @@ Update the SERVER constant to Server IP address.
 Header and content are separated by empty lines.
 
 ```
-PRINT\r\n
-\r\n
-I am printing this\r\n
-\r\n
+PRINT\n
+\n
+I am printing this\n
+\n
 ```
 
 ## TODO
 
-- [ ] add support for bold
-- [ ] add support for align left
-- [ ] add support for align center
-- [ ] add support for align right
+- [x] configure server address with cli args on client/server
+- [x] configure output file with cli args on client
+- [x] add support for bold
+- [x] add support for align left
+- [x] add support for align center
+- [x] add support for align right
 - [ ] add support line feed n lines
 - [ ] add support for tabs
 - [ ] add support for printing bitmaps

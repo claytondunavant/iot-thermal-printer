@@ -1,6 +1,4 @@
 #include "thermalprinter.h"
-#include <cstdio>
-#include <cstring>
 
 Thermal_Printer::Thermal_Printer(std::string path) {
 
@@ -17,16 +15,15 @@ void Thermal_Printer::print(std::string str) {
         return;
     }
     
-    fprintf(file, str.c_str());
+    fprintf(file, (const char *) str.c_str());
 }
 
 bool is_recognized_tag(std::string tag) {
-    for ( auto legal_tag : LEGAL_TAGS ) {
-        if ( strcmp(legal_tag, tag.c_str()) == 0 ) {
-            return true;
-        }
-    }
-    return false;
+    return legal_tags.find(tag) != legal_tags.end();
+}
+
+std::string tag_to_esc_code(std::string tag) {
+    return legal_tags[tag];
 }
 
 int get_index_of_next_close_carrot(unsigned int i, std::string str) {
@@ -41,14 +38,14 @@ int get_index_of_next_close_carrot(unsigned int i, std::string str) {
 }
 
 // convert html to thermal printer escape sequences
-std::string html_to_thermal_printer(std::string html) {
+std::string body_to_thermal_printer(std::string html) {
     
     
     std::string out; //output
     std::stack<std::string> s; //stack 
     unsigned int i; // index
     char c; // character buffer
-    std::string buf; // string buffer
+    std::string tag; // tag buffer
     int i_next_close_carrot; //index of next close carrot
     
     //loop through
@@ -58,7 +55,7 @@ std::string html_to_thermal_printer(std::string html) {
 
     for ( i = 0; i < html.size(); i++ ) {
         c = html[i];
-        
+
         if ( c == '<' && i < (html.size() - 1) ) {
             
             c = html[i+1];
@@ -68,38 +65,19 @@ std::string html_to_thermal_printer(std::string html) {
             if ( i_next_close_carrot == -1 )
                 break;
             
-            // if its a close tag
-            if ( c == '/' ) {
-
-                // get the substring, its the tag name
-                buf = html.substr(i+2, i_next_close_carrot - (i+2));
-                
-                // jump to after tag
-                i = i_next_close_carrot;
-                continue;
-
-            // if its an open bracket
+            // get the substring, its the tag name
+            tag = html.substr(i+1, i_next_close_carrot - (i+1));
+            
+            if ( is_recognized_tag(tag) ) {
+                out.append(tag_to_esc_code(tag));
+                out.append(PRINT_DATA_IN_BUFFER); // flush the tag
             } else {
-                
-                // get the substring, its the tag name
-                buf = html.substr(i+1, i_next_close_carrot - (i+1));
-                
-                // TODO handle unrecongized nested cases
-                if ( is_recognized_tag(buf) ) {
-                    
-                    if ( buf == "h1" ) {
-                        out.append(ALIGN_CENTER);
-                        out.append(BOLD);
-                    } else if ( buf == "p") {
-                        out.append(ALIGN_LEFT);
-                        out.append(UNBOLD);
-                    }
-                }
-                
-                // jump to after tag
-                i = i_next_close_carrot;
-                continue;
+                out.append("Unrecongized tag: " + tag + "\n");
             }
+            
+            // jump to after tag
+            i = i_next_close_carrot;
+            continue;
         }
         
         out.push_back(c);
