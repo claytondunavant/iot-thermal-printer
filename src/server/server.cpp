@@ -3,6 +3,9 @@ Main Source: https://beej.us/guide/bgnet/html/
 */
 
 #include "../sockethelper/sockethelper.h"
+#include <chrono>
+#include <string>
+#include <utility>
 
 /*
 getaddrinfo()
@@ -11,6 +14,26 @@ bind()
 listen()
 accept()
 */
+
+std::unordered_map<unsigned int, Connection> connections;
+unsigned int num_connections = 0;
+std::mutex connections_mutex;
+
+// returns new uid
+int create_new_connection (int fd) {
+                        
+    Connection new_connection;
+
+    new_connection.fd = fd;
+    new_connection.unix_epoch_last_received_heartbeat = time_since_unix_epoch(); 
+    new_connection.heartbeat_n = 0;
+    
+    connections_mutex.lock();
+    connections.insert(std::make_pair(num_connections, new_connection));
+    connections_mutex.unlock();
+    
+    return num_connections++;
+}
 
 /*
 Usage:
@@ -126,11 +149,16 @@ int main (int argc, char *argv[]) {
                 
                 if ( new_msg.header == "HEART\n\n" ) {
 
-                    int heart_n = heart_msg_read(new_msg);
+                    Heartbeat heartbeat = heart_msg_read(new_msg);
+                    
+                    // if heart_n is 0, then assign usid and add to connections
+                    if ( heartbeat.n == 0 ) {
+                        heartbeat.uid = create_new_connection(clientfd);
+                    }
 
-                    std::cout << "Received HEART " + std::to_string(heart_n) + " from Client" << std::endl;
+                    std::cout << "Received HEART " + std::to_string(heartbeat.n) + " from Client " + std::to_string(heartbeat.uid) << std::endl;
 
-                    heart_msg_write(clientfd, heart_n + 1);
+                    heart_msg_write(clientfd, heartbeat.n + 1, heartbeat.uid);
                 }
                 
             }

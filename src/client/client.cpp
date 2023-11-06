@@ -8,6 +8,8 @@ Usage:
 client localhost /dev/ttyS0
 */
 
+unsigned int uid;
+
 int main (int argc, char *argv[]) {
     
     int status;
@@ -62,6 +64,11 @@ int main (int argc, char *argv[]) {
     // send heart 0
     heart_msg_write(sockfd, 0);
     
+    // receive heartbeat 1 with uid
+    Heartbeat hb1 = heart_msg_read(skt_read_msg(sockfd));
+    uid = hb1.uid;
+    heart_msg_write(sockfd, hb1.n + 1, uid);
+    
     // send/receive loop
     while(1) {
         
@@ -71,11 +78,11 @@ int main (int argc, char *argv[]) {
             continue;
         
         if ( new_msg.header == "HEART\n\n" ) {
-            int heart_n = heart_msg_read(new_msg);
+            Heartbeat heartbeat = heart_msg_read(new_msg);
 
-            std::cout << "Received HEART " + std::to_string(heart_n) + " from Server" << std::endl;
+            std::cout << "Received HEART " + std::to_string(heartbeat.n) + " from Server" << std::endl;
 
-            heart_msg_write(sockfd, heart_n + 1);
+            heart_msg_write(sockfd, heartbeat.n + 1, uid);
         }
     }
 

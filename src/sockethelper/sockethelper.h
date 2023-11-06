@@ -7,6 +7,8 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <unordered_map>
+#include <mutex>
 
 #define PORT 16662
 #define PORT_STR "16662"
@@ -18,12 +20,26 @@ struct Message {
     std::string body;
 };
 
+struct Connection {
+    int fd;
+    unsigned int unix_epoch_last_received_heartbeat;
+    unsigned int heartbeat_n;
+};
+
+// struct of a parsed hearbeat message body
+struct Heartbeat {
+    unsigned int n;
+    unsigned int uid;
+};
+
 Message skt_read_msg(int fd);
 
 void skt_write(int fd, std::string str);
 
-int heart_msg_read(Message msg);
+Heartbeat heart_msg_read(Message msg);
 
-void heart_msg_write(int fd, int n);
+void heart_msg_write(int fd, int n, unsigned int uid = 0);
 
 bool msg_is_empty(Message msg);
+
+unsigned int time_since_unix_epoch();
