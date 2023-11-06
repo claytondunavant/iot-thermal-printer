@@ -98,9 +98,11 @@ int main (int argc, char *argv[]) {
         clientfd = accept(sockfd, (struct sockaddr *)&client_addr,  &addr_size);
         
         if (!fork()) { //child
+            
+            // send serverMessage 
             close(sockfd);
             
-            std::string str = std::string();
+            /*std::string str = std::string();
 
             std::fstream serverMessageFile(argv[2]);
 
@@ -112,7 +114,26 @@ int main (int argc, char *argv[]) {
                 serverMessageFile.close();
             }
             
-            skt_write(clientfd, str);
+            skt_write(clientfd, str);*/
+            
+            // hello loop
+            while (1) {
+                
+                Message new_msg = skt_read_msg(clientfd);
+                
+                if ( msg_is_empty(new_msg) ) 
+                    continue;
+                
+                if ( new_msg.header == "HEART\n\n" ) {
+
+                    int heart_n = heart_msg_read(new_msg);
+
+                    std::cout << "Received HEART " + std::to_string(heart_n) + " from Client" << std::endl;
+
+                    heart_msg_write(clientfd, heart_n + 1);
+                }
+                
+            }
 
             close(clientfd);
             exit(0);

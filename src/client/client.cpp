@@ -1,5 +1,7 @@
 #include "../sockethelper/sockethelper.h"
 #include "thermalprinter.h"
+#include <cstdio>
+#include <iostream>
 
 /*
 Usage:
@@ -57,6 +59,26 @@ int main (int argc, char *argv[]) {
         exit(1);
     }
     
+    // send heart 0
+    heart_msg_write(sockfd, 0);
+    
+    // send/receive loop
+    while(1) {
+        
+        Message new_msg = skt_read_msg(sockfd);
+        
+        if ( msg_is_empty(new_msg) ) 
+            continue;
+        
+        if ( new_msg.header == "HEART\n\n" ) {
+            int heart_n = heart_msg_read(new_msg);
+
+            std::cout << "Received HEART " + std::to_string(heart_n) + " from Server" << std::endl;
+
+            heart_msg_write(sockfd, heart_n + 1);
+        }
+    }
+
     // create Thermal Printer object
     Thermal_Printer tp = Thermal_Printer(argv[2]);
     

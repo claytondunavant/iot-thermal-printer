@@ -16,6 +16,19 @@ Update the SERVER constant to Server IP address.
 
 Header and content are separated by empty lines.
 
+### HEART
+
+```
+HEART\n
+\n
+n\n
+\n
+```
+
+Heartbeat packets are sent between the client and server on a time interval.
+
+### PRINT
+
 ```
 PRINT\n
 \n
