@@ -47,3 +47,9 @@ I am printing this\n
 - [ ] add support line feed n lines
 - [ ] add support for tabs
 - [ ] add support for printing bitmaps
+- [ ] make reading/writing on a connection async rather than polling
+- [x] implment trivial heartbeats
+- [ ] implment heartbeats between client and server every 10 seconds
+- [ ] implment registering a uid for each client by the server after 0th heartbeat
+- [ ] implment DS for keeping track of connections on server
+- [ ] broadcast PRINT message from another process to all connections
