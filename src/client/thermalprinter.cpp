@@ -55,10 +55,10 @@ std::string body_to_thermal_printer(std::string html) {
 
     for ( i = 0; i < html.size(); i++ ) {
         c = html[i];
-
+        
+        //if beginning of tag
         if ( c == '<' && i < (html.size() - 1) ) {
             
-            c = html[i+1];
             i_next_close_carrot = get_index_of_next_close_carrot(i, html);
             
             // if there isnt a close carrot
@@ -70,7 +70,7 @@ std::string body_to_thermal_printer(std::string html) {
             
             if ( is_recognized_tag(tag) ) {
                 out.append(tag_to_esc_code(tag));
-                out.append(PRINT_DATA_IN_BUFFER); // flush the tag
+                out.append(PRINT_DATA_IN_BUFFER_CODE); // flush the tag
             } else {
                 out.append("Unrecongized tag: " + tag + "\n");
             }

@@ -1,6 +1,5 @@
 #include "../sockethelper/sockethelper.h"
 #include "thermalprinter.h"
-#include <iostream>
 
 /*
 Usage:

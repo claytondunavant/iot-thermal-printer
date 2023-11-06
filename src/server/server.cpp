@@ -3,8 +3,6 @@ Main Source: https://beej.us/guide/bgnet/html/
 */
 
 #include "../sockethelper/sockethelper.h"
-#include <cstdio>
-#include <iostream>
 
 /*
 getaddrinfo()
