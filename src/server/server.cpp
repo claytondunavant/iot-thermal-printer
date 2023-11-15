@@ -156,7 +156,7 @@ int main (int argc, char *argv[]) {
                         heartbeat.uid = create_new_connection(clientfd);
                     }
 
-                    std::cout << "Received HEART " + std::to_string(heartbeat.n) + " from Client " + std::to_string(heartbeat.uid) << std::endl;
+                    std::cout << "Received HEART " + std::to_string(heartbeat.n) + " from Client " + std::to_string(heartbeat.uid) + " at " + std::to_string(time_since_unix_epoch()) << std::endl;
 
                     heart_msg_write(clientfd, heartbeat.n + 1, heartbeat.uid);
                 }

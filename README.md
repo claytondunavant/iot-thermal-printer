@@ -26,10 +26,11 @@ uid\n
 \n
 ```
 
-Heartbeat packets are sent between the client and server on a time interval.
+Heartbeat packets are sent between the client and server every 10 seconds.
 The first line of the body is always the number hearbeat it is.
 Client sends the 0th heartbeat to the server without a uid because the server has yet to give to give it one.
 Server creates saves the connection of this 0th heartbeat and provides the uid in the 1st heartbeat.
+Clients send a heartbeat every 10 seconds.
 
 ### PRINT
 

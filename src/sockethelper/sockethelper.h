@@ -15,6 +15,12 @@
 #define BACKLOG 5
 #define BUFFERSIZE 1024
 
+#define HEARTBEAT_SEC 1
+#define FIRST_HEARTBEAT_N_FROM_SERVER 1
+
+#define HEARTBEAT_HEADER "HEART\n\n"
+#define PRINT_HEADER "PRINT\n\n"
+
 struct Message {
     std::string header;
     std::string body;

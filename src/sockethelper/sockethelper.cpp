@@ -1,5 +1,7 @@
 #include "sockethelper.h"
 #include <bits/chrono.h>
+#include <iostream>
+#include <iterator>
 #include <ostream>
 #include <sstream>
 #include <string>
