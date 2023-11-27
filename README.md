@@ -41,6 +41,21 @@ I am printing this\n
 \n
 ```
 
+## Client vs. Server Architecture
+
+### Server Architecture
+
+The server has one thread running for each connection.
+This thread blocks till something is read from a client.
+Depending on what is read, something is written back to a client.
+
+### Client Architecture
+
+The client has one reading thread and one writing thread.
+The reading thread blocks till something is read from the server.
+What is read affects the local state (last received heartbeat number or print something).
+The writing thread writes a heartbeat to the server every 1 second.
+
 ## TODO
 
 - [x] configure server address with cli args on client/server

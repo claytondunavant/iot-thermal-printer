@@ -4,8 +4,11 @@ Main Source: https://beej.us/guide/bgnet/html/
 
 #include "../sockethelper/sockethelper.h"
 #include <chrono>
+#include <cstddef>
+#include <pthread.h>
 #include <string>
 #include <utility>
+#include <vector>
 
 /*
 getaddrinfo()
@@ -33,6 +36,39 @@ int create_new_connection (int fd) {
     connections_mutex.unlock();
     
     return num_connections++;
+}
+
+// Read and Respond
+void * handle_connection(void * arg) {
+    int clientfd = *(int*)arg;
+
+    for (;;) {
+
+        Message new_msg = skt_read_msg(clientfd);
+        
+        if ( msg_is_empty(new_msg) ) 
+            continue;
+        
+        if ( new_msg.header == "HEART\n\n" ) {
+
+            Heartbeat heartbeat = heart_msg_read(new_msg);
+            
+            // if heart_n is 0, then assign usid and add to connections
+            if ( heartbeat.n == 0 ) {
+                heartbeat.uid = create_new_connection(clientfd);
+            }
+
+            std::cout << "Received HEART " + std::to_string(heartbeat.n) + " from Client " + std::to_string(heartbeat.uid) + " at " + std::to_string(time_since_unix_epoch()) << std::endl;
+
+            heart_msg_write(clientfd, heartbeat.n + 1, heartbeat.uid);
+        }
+
+    }
+    
+    // done with this file descriptor
+    close(clientfd);
+
+    return nullptr;
 }
 
 /*
@@ -115,60 +151,21 @@ int main (int argc, char *argv[]) {
     printf("Waiting for connections...\n");
     
     // accept loop
+    std::vector<pthread_t> threads;
     while (1) {
 
         addr_size = sizeof(client_addr);
         clientfd = accept(sockfd, (struct sockaddr *)&client_addr,  &addr_size);
         
-        if (!fork()) { //child
-            
-            // send serverMessage 
-            close(sockfd);
-            
-            /*std::string str = std::string();
-
-            std::fstream serverMessageFile(argv[2]);
-
-            if ( serverMessageFile.is_open() ) {
-                char c;
-                while ( serverMessageFile.get(c) ) {
-                    str.push_back(c);
-                }
-                serverMessageFile.close();
-            }
-            
-            skt_write(clientfd, str);*/
-            
-            // hello loop
-            while (1) {
-                
-                Message new_msg = skt_read_msg(clientfd);
-                
-                if ( msg_is_empty(new_msg) ) 
-                    continue;
-                
-                if ( new_msg.header == "HEART\n\n" ) {
-
-                    Heartbeat heartbeat = heart_msg_read(new_msg);
-                    
-                    // if heart_n is 0, then assign usid and add to connections
-                    if ( heartbeat.n == 0 ) {
-                        heartbeat.uid = create_new_connection(clientfd);
-                    }
-
-                    std::cout << "Received HEART " + std::to_string(heartbeat.n) + " from Client " + std::to_string(heartbeat.uid) + " at " + std::to_string(time_since_unix_epoch()) << std::endl;
-
-                    heart_msg_write(clientfd, heartbeat.n + 1, heartbeat.uid);
-                }
-                
-            }
-
-            close(clientfd);
-            exit(0);
-        }
-        
-        close(clientfd);
+        // accept a new connection and make a thread
+        pthread_t new_connection;
+        threads.push_back(new_connection);
+        pthread_create(&new_connection, nullptr, handle_connection, &clientfd);
+    }
     
+    // TODO: save new connections to array and join them here
+    for ( pthread_t thread : threads ) {
+        pthread_join(thread, nullptr);
     }
     
     return 0;   
