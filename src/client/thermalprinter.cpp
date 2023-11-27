@@ -7,15 +7,21 @@ Thermal_Printer::Thermal_Printer(std::string path) {
     //TODO send initialization codes to printer
 }
 
-void Thermal_Printer::print(std::string str) {
+Thermal_Printer::Thermal_Printer() {
+    return;
+}
 
-    FILE * file = fopen(mpath.c_str(), "w");
-    if ( file == NULL ) {
-        perror("Failed to open serial file");
+void Thermal_Printer::print(std::string str) {
+    
+    std::ofstream serial(mpath);
+
+    if (!serial.is_open()) {
+        std::cerr << "Error opening serial!" << std::endl;
         return;
     }
     
-    fprintf(file, (const char *) str.c_str());
+    serial << str;
+    serial.close();
 }
 
 bool is_recognized_tag(std::string tag) {

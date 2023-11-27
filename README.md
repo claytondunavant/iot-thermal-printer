@@ -54,7 +54,7 @@ Depending on what is read, something is written back to a client.
 The client has one reading thread and one writing thread.
 The reading thread blocks till something is read from the server.
 What is read affects the local state (last received heartbeat number or print something).
-The writing thread writes a heartbeat to the server every 1 second.
+The writing thread writes a heartbeat to the server every 10 seconds.
 
 ## TODO
 
@@ -69,7 +69,8 @@ The writing thread writes a heartbeat to the server every 1 second.
 - [ ] add support for printing bitmaps
 - [ ] make reading/writing on a connection async rather than polling
 - [x] implment trivial heartbeats
-- [ ] implment heartbeats between client and server every 10 seconds
+- [x] implment heartbeats between client and server every 10 seconds
 - [x] implment registering a uid for each client by the server after 0th heartbeat
 - [x] implment DS for keeping track of connections on server
-- [ ] broadcast PRINT message from another process to all connections
+- [x] broadcast PRINT message from another process to all connections
+- [ ] print my agenda from google calendar for the day

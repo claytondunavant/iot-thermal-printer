@@ -16,7 +16,7 @@ client localhost /dev/ttyS0
 unsigned int uid;
 unsigned int time_at_last_heart_send;
 unsigned int last_recv_heartbeat_n;
-Thermal_Printer tp = Thermal_Printer("REPLACE"); // TODO: fix
+Thermal_Printer tp;
 std::mutex mutex;
 
 int connect_to_server (char * hostname) {
@@ -78,7 +78,7 @@ void * read_from_server(void *arg) {
             continue;
         }
         
-        print_message(new_msg);
+        //print_message(new_msg);
         
         if ( new_msg.header == HEARTBEAT_HEADER ) {
             Heartbeat heartbeat = heart_msg_read(new_msg);
@@ -97,6 +97,7 @@ void * read_from_server(void *arg) {
             std::cout << "Received HEART " + std::to_string(heartbeat.n) + " from Server at " + std::to_string(time_since_unix_epoch()) << std::endl;
 
         } else if ( new_msg.header == PRINT_HEADER ) {
+
             tp.print(body_to_thermal_printer(new_msg.body));
         }
     }

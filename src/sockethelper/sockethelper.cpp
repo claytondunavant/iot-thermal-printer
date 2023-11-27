@@ -10,6 +10,10 @@ bool  str_end_is_double_lf(std::string str) {
     return str.length() >= 2 && str.substr(str.length() - 2).compare("\n\n") == 0;
 }
 
+void skt_write(int fd, std::string str) {
+    write(fd, str.c_str(), str.length());
+}
+
 /*
 Whether http requests have a message or not requires knowledge on the content of the message.
 I don't want to deal with that.
@@ -52,8 +56,8 @@ Message skt_read_msg(int fd) {
     return msg;
 }
 
-void skt_write(int fd, std::string str) {
-    write(fd, str.c_str(), str.length());
+void skt_write_msg(int fd, Message msg) {
+    skt_write(fd, msg.header + msg.body); 
 }
 
 void heart_msg_write(int fd, int n, unsigned int uid) {

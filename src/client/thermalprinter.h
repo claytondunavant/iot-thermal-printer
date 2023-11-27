@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <cstring>
 #include <string>
+#include <fstream>
 
 #define BOLD_TAG "b"
 #define ALIGN_CENTER_TAG "ac"
@@ -39,6 +40,7 @@ static std::unordered_map<std::string, std::string> default_tag_values = {
 class Thermal_Printer {
     public:
     Thermal_Printer(std::string path);
+    Thermal_Printer();
 
     void print(std::string str);
     

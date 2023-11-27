@@ -15,7 +15,7 @@
 #define BACKLOG 5
 #define BUFFERSIZE 1024
 
-#define HEARTBEAT_SEC 1
+#define HEARTBEAT_SEC 10
 #define FIRST_HEARTBEAT_N_FROM_SERVER 1
 
 #define HEARTBEAT_HEADER "HEART\n\n"
@@ -38,9 +38,11 @@ struct Heartbeat {
     unsigned int uid;
 };
 
+void skt_write(int fd, std::string str);
+
 Message skt_read_msg(int fd);
 
-void skt_write(int fd, std::string str);
+void skt_write_msg(int fd, Message msg);
 
 Heartbeat heart_msg_read(Message msg);
 
@@ -50,4 +52,4 @@ bool msg_is_empty(Message msg);
 
 unsigned int time_since_unix_epoch();
 
-void print_message(Message msg);
+void print_message(Message msHEg);

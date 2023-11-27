@@ -49,9 +49,9 @@ void * handle_connection(void * arg) {
         if ( msg_is_empty(new_msg) ) 
             continue;
         
-        print_message(new_msg);
+        //print_message(new_msg);
         
-        if ( new_msg.header == "HEART\n\n" ) {
+        if ( new_msg.header == HEARTBEAT_HEADER ) {
 
             Heartbeat heartbeat = heart_msg_read(new_msg);
             
@@ -63,6 +63,13 @@ void * handle_connection(void * arg) {
             std::cout << "Received HEART " + std::to_string(heartbeat.n) + " from Client " + std::to_string(heartbeat.uid) + " at " + std::to_string(time_since_unix_epoch()) << std::endl;
 
             heart_msg_write(clientfd, heartbeat.n + 1, heartbeat.uid);
+        
+        // if received a print, send to all connections
+        } else if ( new_msg.header == PRINT_HEADER ) {
+            for ( auto connection : connections ) {
+                int fd = connection.second.fd;
+                skt_write_msg(fd, new_msg);
+            }
         }
 
     }
@@ -165,7 +172,6 @@ int main (int argc, char *argv[]) {
         pthread_create(&new_connection, nullptr, handle_connection, &clientfd);
     }
     
-    // TODO: save new connections to array and join them here
     for ( pthread_t thread : threads ) {
         pthread_join(thread, nullptr);
     }
