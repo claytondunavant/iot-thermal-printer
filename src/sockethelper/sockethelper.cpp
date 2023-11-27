@@ -113,3 +113,8 @@ bool msg_is_empty(Message msg) {
 unsigned int time_since_unix_epoch() {
     return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
+
+void print_message(Message m){
+    std::cout << "HEADER: " << m.header << std::endl;
+    std::cout << "BODY: " << m.body << std::endl;
+}

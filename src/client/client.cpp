@@ -78,6 +78,8 @@ void * read_from_server(void *arg) {
             continue;
         }
         
+        print_message(new_msg);
+        
         if ( new_msg.header == HEARTBEAT_HEADER ) {
             Heartbeat heartbeat = heart_msg_read(new_msg);
             
@@ -102,6 +104,7 @@ void * read_from_server(void *arg) {
     return nullptr;
 }
 
+// Send heartbeats
 void * write_to_server(void * arg) {
 
     unsigned int curr_time; 

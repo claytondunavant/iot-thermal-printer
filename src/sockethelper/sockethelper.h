@@ -49,3 +49,5 @@ void heart_msg_write(int fd, int n, unsigned int uid = 0);
 bool msg_is_empty(Message msg);
 
 unsigned int time_since_unix_epoch();
+
+void print_message(Message msg);

@@ -49,6 +49,8 @@ void * handle_connection(void * arg) {
         if ( msg_is_empty(new_msg) ) 
             continue;
         
+        print_message(new_msg);
+        
         if ( new_msg.header == "HEART\n\n" ) {
 
             Heartbeat heartbeat = heart_msg_read(new_msg);
