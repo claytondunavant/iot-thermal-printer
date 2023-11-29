@@ -82,7 +82,7 @@ void * handle_connection(void * arg) {
 
 /*
 Usage:
-./server localhost serverMessageFile
+./server localhost 
 */
 
 int main (int argc, char *argv[]) {
@@ -97,8 +97,8 @@ int main (int argc, char *argv[]) {
     int yes = 1;
     
     // handle command line arguments
-    if ( argc != 3 ) {
-        fprintf(stderr, "Usage: server hostname /path/to/message\n");
+    if ( argc != 2 ) {
+        fprintf(stderr, "Usage: server hostname\n");
         exit(1);
     }
     
