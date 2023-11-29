@@ -1,17 +1,5 @@
 # iot-thermal-printer
 
-## Setting up
-
-### On the client
-
-Update the SERVER constant to server IP address.
-
-Update the SERIAL constant to path to serial device.
-
-### On the server
-
-Update the SERVER constant to Server IP address.
-
 ## Protocol
 
 Header and content are separated by empty lines.
@@ -47,7 +35,7 @@ I am printing this\n
 
 The server has one thread running for each connection.
 This thread blocks till something is read from a client.
-Depending on what is read, something is written back to a client.
+Depending on what is read, something is written back to a/some client(s).
 
 ### Client Architecture
 
@@ -73,4 +61,5 @@ The writing thread writes a heartbeat to the server every 10 seconds.
 - [x] implment registering a uid for each client by the server after 0th heartbeat
 - [x] implment DS for keeping track of connections on server
 - [x] broadcast PRINT message from another process to all connections
-- [ ] print my agenda from google calendar for the day
+- [x] print my agenda from google calendar for the day
+- [ ] send PRINT messages to only one client
